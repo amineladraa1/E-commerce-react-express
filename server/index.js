@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import userRouter from "./routes/user.js";
 import dotenv from "dotenv";
 import expressValidator from "express-validator";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -11,6 +12,7 @@ const app = express();
 app.use(express.json({ limit: "30mb", extended: true }));
 app.use(express.urlencoded({ limit: "30mb", extended: true }));
 app.use(expressValidator());
+app.use(cookieParser());
 
 app.use("/user", userRouter);
 
