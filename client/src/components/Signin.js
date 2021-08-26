@@ -5,10 +5,14 @@ import {
   TextField,
   Typography,
   useTheme,
+  Snackbar,
 } from "@material-ui/core";
 import React, { useState } from "react";
 import Bground from "../assets/background.jpg";
-// import { signUp } from "../api/index";
+import MuiAlert from "@material-ui/lab/Alert";
+import { useHistory } from "react-router-dom";
+import { signIn } from "../api";
+import { authenticate } from "../auth";
 
 const useStyle = makeStyles((theme) => ({
   bgRoot: {
@@ -51,13 +55,19 @@ const useStyle = makeStyles((theme) => ({
   },
 }));
 
-function Signin() {
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
+function Signin({ setValue }) {
   const classes = useStyle();
   const theme = useTheme();
+  const history = useHistory();
+  const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
   const [values, setValues] = useState({
-    email: "",
-    password: "",
+    email: "test@test.tes",
+    password: "test123",
   });
   const handleChange = (event) => {
     setError(false);
@@ -67,17 +77,35 @@ function Signin() {
     });
   };
 
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // try {
-    //   // const { data } = await signIn(values);
-    //   console.log(data);
-    // } catch (error) {
-    //   setError(error);
-    // }
+    e.preventDefault();
+    setError(false);
+    try {
+      const { data } = await signIn(values);
+      authenticate(data);
+      history.push("/");
+      setValue(0);
+    } catch (error) {
+      setError(error.response.data.error);
+      setOpen(true);
+    }
   };
   return (
     <div className={classes.bgRoot}>
+      <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error">
+          {error}
+        </Alert>
+      </Snackbar>
       <Grid
         container
         direction="column"
@@ -98,6 +126,7 @@ function Signin() {
           <TextField
             label="E-mail"
             variant="outlined"
+            value={values.email}
             fullWidth
             name="email"
             className={classes.txtFields}
@@ -109,6 +138,7 @@ function Signin() {
             label="Password"
             type="password"
             name="password"
+            value={values.password}
             variant="outlined"
             fullWidth
             className={classes.txtFields}

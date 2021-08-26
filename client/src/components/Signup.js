@@ -5,10 +5,13 @@ import {
   TextField,
   Typography,
   useTheme,
+  Snackbar,
 } from "@material-ui/core";
 import React, { useState } from "react";
 import Bground from "../assets/background.jpg";
-import { signUp } from "../api/index";
+import { signUp } from "../api";
+import MuiAlert from "@material-ui/lab/Alert";
+import { useHistory } from "react-router-dom";
 
 const useStyle = makeStyles((theme) => ({
   bgRoot: {
@@ -51,16 +54,30 @@ const useStyle = makeStyles((theme) => ({
     },
   },
 }));
-
-function Signup() {
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+function Signup({ setValue }) {
   const classes = useStyle();
   const theme = useTheme();
+  const history = useHistory();
   const [error, setError] = useState("");
+
+  const [open, setOpen] = React.useState(false);
   const [values, setValues] = useState({
     name: "",
     email: "",
     password: "",
   });
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
+
   const handleChange = (event) => {
     setError(false);
     setValues({
@@ -71,15 +88,27 @@ function Signup() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(false);
     try {
       const { data } = await signUp(values);
-      console.log(data);
+      setOpen(true);
+      setTimeout(function () {
+        history.push("/signin");
+        setValue(2);
+      }, 3000);
     } catch (error) {
-      console.log(error);
+      setError(error.response.data.error);
+      setOpen(true);
     }
   };
+
   return (
     <div className={classes.bgRoot}>
+      <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity={error ? "error" : "success"}>
+          {error ? error : "you are signed up !! redirecting you to sign in"}
+        </Alert>
+      </Snackbar>
       <Grid
         container
         direction="column"

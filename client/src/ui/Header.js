@@ -1,13 +1,12 @@
 import { AppBar, Tab, Tabs, Toolbar, Typography } from "@material-ui/core";
-import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Link, useHistory } from "react-router-dom";
 
-function Header() {
-  const [value, setValue] = useState(0);
-
+function Header({ value, setValue }) {
+  const history = useHistory();
   /// in eatch rerender we fix the value to match the path we currently in
   useEffect(() => {
-    switch (window.location.pathname) {
+    switch (history.location.pathname) {
       case "/":
         setValue(0);
         break;
@@ -20,7 +19,7 @@ function Header() {
       default:
         break;
     }
-  }, []);
+  }, [history.location.pathname, setValue]);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
