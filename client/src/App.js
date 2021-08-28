@@ -4,6 +4,8 @@ import Signin from "./components/Signin";
 import Signup from "./components/Signup";
 import Header from "./ui/Header";
 import React from "react";
+import PrivateRoute from "./auth/PrivateRoute";
+import Dashboard from "./components/UserDashboard";
 
 function App() {
   const [value, setValue] = React.useState(0);
@@ -20,6 +22,9 @@ function App() {
           path="/signup"
           render={(props) => <Signup {...props} setValue={setValue} />}
         />
+        <PrivateRoute path="/user/dashboard">
+          <Dashboard />
+        </PrivateRoute>
       </Switch>
     </BrowserRouter>
   );

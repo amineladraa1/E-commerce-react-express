@@ -92,8 +92,8 @@ function Signin({ setValue }) {
     try {
       const { data } = await signIn(values);
       authenticate(data);
-      history.push("/");
-      setValue(0);
+      history.push("/user/dashboard");
+      setValue(1);
     } catch (error) {
       setError(error.response.data.error);
       setOpen(true);

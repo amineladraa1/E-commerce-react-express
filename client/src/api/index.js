@@ -9,3 +9,7 @@ export const signUp = (name, email, password) =>
 
 export const signIn = (email, password) =>
   api.post("/api/signin", email, password);
+
+export const signOut = () => {
+  api.get("/api/signout");
+};
